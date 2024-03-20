@@ -1,0 +1,46 @@
+syntax="proto3";
+
+package todo;
+
+option csharp_namespace = "TodoProto";
+
+
+service TodoService {
+  rpc GetTodos (Empty) returns (Todos);
+  rpc AddTodo (newTodo) returns (Todo);
+  rpc UpdateTodo (updateTodo) returns (Todo);
+  rpc DeleteTodo (Todo) returns (Empty);
+  rpc GetTodo (getTodo) returns (Todo);
+}
+
+message Empty {}
+
+message Todos {
+  repeated Todo todos = 1;
+}
+
+message Todo {
+  string id = 1;
+  string title = 2;
+  bool completed = 3;
+}
+
+message newTodo {
+  string title = 1;
+}
+
+message updateTodo {
+  string id = 1;
+  string title = 2;
+  bool completed = 3;
+}
+
+message deleteTodo {
+  string id = 1;
+}
+
+message getTodo {
+  string id = 1;
+}
+
+
