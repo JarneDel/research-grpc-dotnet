@@ -2,16 +2,25 @@ using TodoProto;
 
 namespace dotnet_webgrpc.Repository;
 
-public class TodoRepository: ITodoRepository
+public class TodoRepository(ILogger<TodoRepository> logger): ITodoRepository
 {
     private Todos _todos = new Todos
     {
-        Todos_ = { }
+        Todos_ =
+        {
+            new Todo()
+            {
+                Completed = true,
+                Id = Guid.NewGuid().ToString(),
+                Title = "Learn gRPC"
+            }
+        }
     };
     
     public Todo AddTodo(Todo todo)
     {
         todo.Id = Guid.NewGuid().ToString();
+        logger.LogInformation("Adding todo with id {TodoId}", todo.Id);
         _todos.Todos_.Add(todo);
         return todo;
     }

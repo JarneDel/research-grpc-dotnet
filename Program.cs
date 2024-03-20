@@ -13,7 +13,7 @@ builder.Services.AddCors(o => o.AddPolicy(corsPolicy, policy =>
     // .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
 }));
 
-builder.Services.AddTransient<ITodoRepository, TodoRepository>();
+builder.Services.AddSingleton<ITodoRepository, TodoRepository>();
 
 var app = builder.Build();
 

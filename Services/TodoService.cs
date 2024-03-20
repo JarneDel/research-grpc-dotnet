@@ -10,7 +10,10 @@ public class TodoService(ILogger<TodoService> logger, ITodoRepository todoReposi
     public override Task<Todos> GetTodos(Empty request, ServerCallContext context)
     {
         logger.LogInformation("GetTodos called");
-        return Task.FromResult(todoRepository.GetTodos());
+        var todos = todoRepository.GetTodos();
+        logger.LogInformation("Returning {TodosCount} todos", todos.Todos_.Count);
+        
+        return Task.FromResult(todos);
     }
 
     public override Task<Todo> AddTodo(newTodo request, ServerCallContext context)
@@ -23,6 +26,7 @@ public class TodoService(ILogger<TodoService> logger, ITodoRepository todoReposi
             Title = request.Title,
             Completed = false
         };
+        logger.LogInformation("Adding todo with id {TodoId}", todo.Id);
 
         var result = Task.FromResult(todoRepository.AddTodo(todo));
 
@@ -42,9 +46,18 @@ public class TodoService(ILogger<TodoService> logger, ITodoRepository todoReposi
 
     public override Task<Empty> DeleteTodo(Todo request, ServerCallContext context)
     {
-        return todoRepository.DeleteTodoById(request.Id)
-            ? Task.FromResult(new Empty())
-            : throw new RpcException(new Status(StatusCode.NotFound, "Todo not found"));
+        try
+        {
+            return todoRepository.DeleteTodoById(request.Id)
+                ? Task.FromResult(new Empty())
+                : throw new RpcException(new Status(StatusCode.NotFound, "Todo not found"));
+        }
+        catch (Exception e)
+        {
+            logger.LogInformation(e.Message);
+            throw new RpcException(new Status(StatusCode.NotFound, "An error occurred"));
+        }
+
     }
 
     public override Task<Todo> GetTodo(getTodo request, ServerCallContext context)
